@@ -132,8 +132,8 @@ public class AuthService {
 
 	    user.setPassword(encoder.encode(newPassword));
 
-	    user.setResetToken(null);
-	    user.setResetTokenExpires(null);
+	    user.setResetToken(null);// هنا انا بمسح ال resetToken عشان ميبقاش صالح تاني
+	    user.setResetTokenExpires(null); // نفس الكلام بمسح ال expiration بتاعه 
 	    
 	    userRepo.save(user);
 
@@ -163,5 +163,9 @@ public class AuthService {
 	    }
 	}
 	
-	
+	public AuthResponse getUserById(String id) {
+		User user = userRepo.findById(id).orElseThrow(()->new RecordNotFoundException("User not found"));
+		UserResponse response = mapper.toUserResponse(user);
+		return new AuthResponse(true,"User fetched successfully",response);
+	}
 }

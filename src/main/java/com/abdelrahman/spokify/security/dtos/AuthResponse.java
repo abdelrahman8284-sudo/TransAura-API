@@ -34,6 +34,9 @@ public class AuthResponse {
 		super();
 	}
 	
-	
+	public AuthResponse(boolean success) {
+		super();
+		this.success = success;
+	}
 	
 }

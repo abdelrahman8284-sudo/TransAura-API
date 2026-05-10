@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,6 +28,7 @@ public class User {
 	@Indexed(unique = true)
 	private String email;
 	private String userName;
+    @Size(min = 6, message = "Password must be at least 6 characters")
 	private String password;
 	private String resetToken;
 	private LocalDateTime resetTokenExpires;

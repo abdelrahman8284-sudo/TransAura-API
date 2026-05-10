@@ -62,7 +62,7 @@ public class AuthController {
 
 	@PostMapping("/reset-password")
 	public ResponseEntity<ApiResponse> confirmReset(@RequestBody Map<String, String> request) {
-	    String token = request.get("resetToken");
+	    String token = request.get("token");
 	    String newPassword = request.get("newPassword");
 	    return ResponseEntity.ok(authService.confirmResetPassword(token, newPassword));
 	}

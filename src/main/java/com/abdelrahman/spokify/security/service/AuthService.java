@@ -121,15 +121,23 @@ public class AuthService {
         return new ApiResponse(true, "Reset link sent successfully.");
     }
 
-	public ApiResponse confirmResetPassword(String resetToken, String newPassword) {
+	public ApiResponse confirmResetPassword(String token, String newPassword) {
 
-		User user = userRepo.findByResetToken(resetToken)
+		if (token == null || token.trim().isEmpty()) {
+	        throw new RuntimeException("Invalid or missing token.");
+	    }
+		
+		if (newPassword == null || newPassword.length() < 6) {
+	        return new ApiResponse(false, "Password must be at least 6 characters long.");
+	    }
+		
+		User user = userRepo.findByResetToken(token)
 	            .orElseThrow(() -> new RuntimeException("Invalid or expired token."));
 
 	    if (user.getResetTokenExpires().isBefore(LocalDateTime.now())) {
 	        throw new RuntimeException("Token expired.");
 	    }
-
+	    
 	    user.setPassword(encoder.encode(newPassword));
 
 	    user.setResetToken(null);// هنا انا بمسح ال resetToken عشان ميبقاش صالح تاني

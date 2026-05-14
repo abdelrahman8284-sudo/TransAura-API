@@ -11,6 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableMongoAuditing
 public class AppConfig implements WebMvcConfigurer{
 
+	// عشان يقدر يفتح اي audio تحت public بمسار /audio/**
 	@Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // أي طلب بيبدأ بـ /audio/** هيروح يدور في فولدر public اللي عندك
@@ -18,14 +19,16 @@ public class AppConfig implements WebMvcConfigurer{
                 .addResourceLocations("file:./public/");
     }
 
-	@Bean
-	public WebMvcConfigurer corsConfigurer() {
-		return new WebMvcConfigurer() {
-			@Override
-			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/**").allowedOrigins("http://localhost:5173", "http://127.0.0.1:5173")
-						.allowedMethods("*").allowedHeaders("*");
-			}
-		};
-	}
+	// للربط بين 
+	@Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins(
+                        "http://localhost:5173",
+                        "http://127.0.0.1:5173"
+                )
+                .allowedMethods("*")
+                .allowedHeaders("*")
+                .allowCredentials(true);
+    }
 }

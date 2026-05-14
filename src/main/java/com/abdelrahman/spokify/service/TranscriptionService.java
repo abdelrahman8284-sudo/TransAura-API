@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
+import com.abdelrahman.spokify.dto.request.TranscriptionRequest;
 import com.abdelrahman.spokify.model.Audio;
 import com.abdelrahman.spokify.model.Metadata;
 import com.abdelrahman.spokify.model.Transcription;
@@ -26,32 +27,25 @@ public class TranscriptionService {
 	private final AudioStorageService storageService;
 	private final UserRepo userRepo;
 	
-	public Transcription create(
-	        String transcriptionText,
-	        String enhanced,
-	        String summary,
-	        String topics,
-	        String tasks,
-	        String userId,
-	        Audio audio
-	) {
+	public Transcription create(TranscriptionRequest request, Audio audioObj) {
+	    Transcription transcription = new Transcription();
+	    
+	    transcription.setTranscription(request.transcription());
+	    transcription.setEnhanced(request.enhanced());
+	    transcription.setTasks(request.tasks());
+	    transcription.setUser(request.User());
+	    transcription.setAudio(audioObj);
 
+	    // إعداد الـ Metadata
 	    Metadata metadata = new Metadata();
-	    metadata.setSummary(summary);
-	    metadata.setTopics(topics);
-	    metadata.setFilename(audio != null ? audio.getOriginalName() : "recording.wav");
+	    metadata.setSummary(request.summary());
+	    metadata.setTopics(request.topics());
+	    metadata.setFilename(audioObj != null ? audioObj.getOriginalName() : "recording.wav");
 	    metadata.setUpload_date(LocalDateTime.now().toString());
-	    metadata.setLanguage("ar");
+	    
+	    transcription.setMetadata(metadata);
 
-	    Transcription t = new Transcription();
-	    t.setTranscription(transcriptionText);
-	    t.setEnhanced(enhanced);
-	    t.setAudio(audio);
-	    t.setMetadata(metadata);
-	    t.setTasks(tasks);
-	    t.setUser(userId);
-
-	    return transcriptionRepo.save(t);
+	    return transcriptionRepo.save(transcription);
 	}
 	
 	public List<Transcription> getAll(){
@@ -72,9 +66,25 @@ public class TranscriptionService {
             String relativePath = transcription.getAudio().getUrl();
             storageService.deleteFile(relativePath);
         }
-		transcriptionRepo.deleteById(transcriptionId);
+		transcriptionRepo.deleteById(transcriptionId); // هنا بقى المسح العادي من ال database 
 	}
-	
+	// هنا الدالة دي عايزنها ترجع بشكل معين 
+	/*
+	 {
+	 _id:
+	 transcription:
+	 enhanced:
+	 summary: 
+	 topics:
+	 tasks:
+	 upload_date
+	 audio{
+	 filename:
+	 downloadUrl:
+	 }
+	 userName:
+	 }
+	*/
 	public List<Map<String, Object>> getUserTranscriptions(String userId) {
 
 	    List<Transcription> transcriptions = transcriptionRepo.findByUserOrderByCreatedAtDesc(userId);
@@ -84,10 +94,12 @@ public class TranscriptionService {
 	    }
 
 	    return transcriptions.stream().map(item -> {
-
 	        Map<String, Object> response = new HashMap<>();
 
+	        // 1. إضافة _id عشان الـ Frontend والـ Sidebar
+	        response.put("_id", item.getId()); 
 	        response.put("id", item.getId());
+	        
 	        response.put("transcription", item.getTranscription());
 	        response.put("enhanced", item.getEnhanced());
 	        response.put("summary", item.getMetadata() != null ? item.getMetadata().getSummary() : null);
@@ -99,18 +111,21 @@ public class TranscriptionService {
 	        if (item.getAudio() != null && item.getAudio().getUrl() != null) {
 	            Map<String, String> audioMap = new HashMap<>();
 	            audioMap.put("filename", item.getAudio().getOriginalName());
+
+	            // 🔥 الحل السحري: نبعت الـ URL زي ما هو في الداتابيز (المسار فقط)
+	            // لأن الـ Frontend بيضيف localhost:4000/audio/ من عنده
 	            audioMap.put("downloadUrl", item.getAudio().getUrl());
+
 	            response.put("audio", audioMap);
 	        } else {
 	            response.put("audio", null);
 	        }
 
-	        // userName (manual populate)
+	        // userName
 	        User user = userRepo.findById(item.getUser()).orElse(null);
-	        response.put("userName", user != null ? user.getUserName() : null);
+	        response.put("userName", user != null ? user.getUserName() : "Unknown");
 
 	        return response;
-
-	    }).toList();
+	    }).toList();// عشان يرجع ك list
 	}
 }

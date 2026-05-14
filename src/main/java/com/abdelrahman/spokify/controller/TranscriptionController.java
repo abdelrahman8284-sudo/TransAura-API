@@ -4,9 +4,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,11 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.abdelrahman.spokify.dto.ApiResponse;
+import com.abdelrahman.spokify.dto.request.TranscriptionRequest;
 import com.abdelrahman.spokify.model.Audio;
 import com.abdelrahman.spokify.model.Transcription;
 import com.abdelrahman.spokify.service.AudioService;
 import com.abdelrahman.spokify.service.TranscriptionService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -32,43 +36,32 @@ public class TranscriptionController {
     private final TranscriptionService transcriptionService;
     private final AudioService audioService;
 
-    @PostMapping("/transcriptions")
+    @PostMapping(value = "/transcriptions", consumes = MediaType.MULTIPART_FORM_DATA_VALUE) // عشان ابعت البيانات دي في ال body
     public ResponseEntity<ApiResponse> createTranscription(
-            @RequestParam(required = false) MultipartFile audio,
-            @RequestParam String transcription,
-            @RequestParam String enhanced,
-            @RequestParam(required = false) String summary,
-            @RequestParam(required = false) String topics,
-            @RequestParam(required = false) String tasks,
-            @RequestParam(name = "user") String user
+            @RequestParam(value = "audio", required = false) MultipartFile audio,
+            @Valid @ModelAttribute TranscriptionRequest request // تجميع كل الحقول النصية هنا
     ) {
-
-        if (transcription == null || transcription.isEmpty()) {
+    	// اولا التحقق من ال transcriptions isEmpty? 
+        if (request.transcription() == null || request.transcription().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ApiResponse(false, "Transcription text is required.", null, null));
         }
 
-        if (user == null || user.isEmpty()) {
+        // user isEmpty?
+        if (request.User() == null || request.User().isEmpty()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ApiResponse(false, "Unauthorized", null, null));
         }
 
         try {
+        	// لو هو بعت empty audio ? ميعملش ال if دي ويرمي exception
             Audio audioObj = null;
-
             if (audio != null && !audio.isEmpty()) {
                 audioObj = audioService.upload(audio);
             }
 
-            Transcription result = transcriptionService.create(
-                    transcription,
-                    enhanced,
-                    summary,
-                    topics,
-                    tasks,
-                    user,
-                    audioObj
-            );
+            // نمرر الـ DTO للـ Service لو كل حاجة تمام يبقى ينشئ ال transcription
+            Transcription result = transcriptionService.create(request, audioObj);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(
                     new ApiResponse(true, "Transcription saved successfully", result, null)
@@ -77,7 +70,7 @@ public class TranscriptionController {
         } catch (Exception e) {
             log.error("Error saving transcription:", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse(false, "Internal server error", null, null));
+                    .body(new ApiResponse(false, "Internal server error", null, null, e.getMessage()));
         }
     }
 
@@ -147,6 +140,7 @@ public class TranscriptionController {
         try {
             List<Map<String, Object>> data = transcriptionService.getUserTranscriptions(userId);
 
+            // نفس الشكل المحتاجينه في front
             return ResponseEntity.ok(
                     new ApiResponse(
                             true,

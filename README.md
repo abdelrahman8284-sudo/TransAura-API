@@ -311,7 +311,7 @@ http://localhost:4000
 - Uploaded audio files support up to 100MB.
 - Frontend and Mobile applications connect to this backend through REST APIs.
 - AI processing services are integrated externally through frontend/mobile layers.
-```
+
 ### 🐳 Run with Docker
 
 Run the backend and MongoDB using Docker Compose without installing Java, Maven, or MongoDB directly on your machine.

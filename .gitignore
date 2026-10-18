@@ -51,3 +51,5 @@ build/
 ### VS Code ###
 .vscode/
 >>>>>>> cb6f984 (initial commit: basic backend structure with auth and transcription)
+.env
+public/

@@ -3,17 +3,22 @@ package com.abdelrahman.spokify.controller;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.abdelrahman.spokify.dto.ApiResponse;
+import com.abdelrahman.spokify.dto.request.TranscriptionRequest;
 import com.abdelrahman.spokify.dto.request.UserRegisterRequest;
 import com.abdelrahman.spokify.dto.request.UserUpdateRequest;
 import com.abdelrahman.spokify.dto.response.UserResponse;
@@ -48,14 +53,15 @@ public class AuthController {
 	}
 	
 	@PutMapping("/updateProfile/{id}")
-	public ResponseEntity<AuthResponse> updateUser(
-	        @PathVariable String id, 
-	        @RequestBody UserUpdateRequest request) {
-	    
+	public ResponseEntity<AuthResponse> updateProfile(
+	        @PathVariable String id,
+	        @Valid @RequestBody UserUpdateRequest request
+	) {
+	    System.out.println(request);
 	    AuthResponse response = authService.updateUser(id, request);
+	    System.out.println("Updated");
 	    return ResponseEntity.ok(response);
 	}
-	
 	@PostMapping("/forgot-password")
 	public ResponseEntity<ApiResponse> forgotPassword(@RequestBody Map<String, String> request) {
 	    String email = request.get("email");
@@ -73,4 +79,6 @@ public class AuthController {
 	public ResponseEntity<AuthResponse> getUserById(@PathVariable String id){
 		return ResponseEntity.ok(authService.getUserById(id));
 	}
+	
+	
 }

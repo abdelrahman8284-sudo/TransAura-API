@@ -22,7 +22,7 @@ public class Transcription {
 
     @NotBlank
     private String transcription;
-    @NotBlank
+    //@NotBlank
     private String enhanced;
 
     private Audio audio;

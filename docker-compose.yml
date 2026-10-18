@@ -1,0 +1,30 @@
+services :
+  app:
+    build: .
+    container_name:
+      spokify-container
+    ports:
+      - "4000:4000"
+    env_file:
+      - ./.env
+    networks:
+      spokify-network:
+
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    env_file:
+      - ./.env
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      spokify-network:
+
+volumes:
+  mongo_data:
+
+networks:
+  spokify-network:
+    driver: bridge

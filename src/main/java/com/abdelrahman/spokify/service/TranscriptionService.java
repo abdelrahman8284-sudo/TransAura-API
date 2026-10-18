@@ -31,15 +31,15 @@ public class TranscriptionService {
 	    Transcription transcription = new Transcription();
 	    
 	    transcription.setTranscription(request.transcription());
-	    transcription.setEnhanced(request.enhanced());
-	    transcription.setTasks(request.tasks());
+	    transcription.setEnhanced(request.enhanced() != null ? request.enhanced() : "");
+	    transcription.setTasks(request.tasks() != null ? request.tasks() : "");
 	    transcription.setUser(request.User());
 	    transcription.setAudio(audioObj);
 
 	    // إعداد الـ Metadata
 	    Metadata metadata = new Metadata();
-	    metadata.setSummary(request.summary());
-	    metadata.setTopics(request.topics());
+	    metadata.setSummary(request.summary() != null ? request.summary() : "");
+	    metadata.setTopics(request.topics() != null ? request.topics() : "");
 	    metadata.setFilename(audioObj != null ? audioObj.getOriginalName() : "recording.wav");
 	    metadata.setUpload_date(LocalDateTime.now().toString());
 	    
@@ -90,7 +90,8 @@ public class TranscriptionService {
 	    List<Transcription> transcriptions = transcriptionRepo.findByUserOrderByCreatedAtDesc(userId);
 
 	    if (transcriptions.isEmpty()) {
-	        throw new RuntimeException("No transcriptions found for this user.");
+//	        throw new RuntimeException("No transcriptions found for this user.");
+	    	return List.of();// بدلا من exception نرجع list فاضية
 	    }
 
 	    return transcriptions.stream().map(item -> {

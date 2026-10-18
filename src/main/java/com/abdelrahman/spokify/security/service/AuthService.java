@@ -6,10 +6,12 @@ import java.util.UUID;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -81,9 +83,8 @@ public class AuthService {
 	} 
 	
 	public AuthResponse updateUser(String id, UserUpdateRequest request) {
-		
 	    User user = userRepo.findById(id)
-	            .orElseThrow(() -> new RecordNotFoundException("User not found"));
+	            .orElseThrow(() -> new RuntimeException("User not found"));
 
 	    if (request.getEmail() != null) user.setEmail(request.getEmail());
 	    if (request.getUserName() != null) user.setUserName(request.getUserName());
@@ -97,9 +98,8 @@ public class AuthService {
 	    }
 
 	    User updatedUser = userRepo.save(user);
-
 	    UserResponse userDto = mapper.toUserResponse(updatedUser);
-	    return new AuthResponse(true, "User updated successfully", null, userDto);
+	    return new AuthResponse(true, "User updated successfully", userDto);
 	}
 	
 	public ApiResponse forgotPassword(String email) {
@@ -175,5 +175,25 @@ public class AuthService {
 		User user = userRepo.findById(id).orElseThrow(()->new RecordNotFoundException("User not found"));
 		UserResponse response = mapper.toUserResponse(user);
 		return new AuthResponse(true,"User fetched successfully",response);
+	}
+	
+	public User getCurrentUser() {
+		UserPrinciple myUserLogin = getCurrentLoginUser();
+		if(!isCurrentUser(myUserLogin.getId())) {
+			throw new AccessDeniedException("This user is not allowed!");
+		}
+		User user = userRepo.findById(myUserLogin.getId()).get();
+		return user;
+	}
+	
+	
+	private UserPrinciple getCurrentLoginUser() {
+		UserPrinciple user = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		return user;
+	}
+	
+	private boolean isCurrentUser(String userId) {
+		UserPrinciple user = getCurrentLoginUser();
+		return user.getId().equals(userId);
 	}
 }

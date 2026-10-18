@@ -49,7 +49,7 @@ public class AudioStorageService {
 			StreamUtils.copy(inputStream, out);
 		}
 		
-		return "\\" + fileName; // هنا احتجنا نرجع اسم الملف بس لانه كدة كدة بيرجع ال public folder نفسه
+		return fileName; // هنا احتجنا نرجع اسم الملف بس لانه كدة كدة بيرجع ال public folder نفسه
 		// هو محتاج كدة في ال frontend 
 	}
 

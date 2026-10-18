@@ -150,10 +150,12 @@ public class TranscriptionController {
                     )
             );
 
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiResponse(false, "No transcriptions found for this user.", null, null));
-        } catch (Exception e) {
+        }
+//        catch (RuntimeException e) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+//                    .body(new ApiResponse(false, "No transcriptions found for this user.", null, null));
+//        } 
+        catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ApiResponse(false, "Internal server error", null, null));
         }

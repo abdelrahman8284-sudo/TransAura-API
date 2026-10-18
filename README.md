@@ -56,6 +56,13 @@ This project was developed as a Graduation Project focused on:
 ### Database
 - **MongoDB**
 
+## 🐳 Containerization
+- Docker
+- Docker Compose
+- Multi-stage Docker Build
+- MongoDB Container
+- Docker Volumes
+
 ### Frontend
 - **React**
 - **TypeScript**
@@ -102,6 +109,11 @@ This project was developed as a Graduation Project focused on:
 - ⚠️ Global Exception Handling
 - 🧱 Clean Layered Backend Architecture
 - 📦 MongoDB Document-Based Persistence
+- 🐳 Dockerized Backend Application
+- 📦 Docker Compose for Running the Backend and MongoDB
+- 💾 Persistent MongoDB Data Using Docker Volumes
+- ⚙️ Environment Variable Configuration
+- 🚀 Simplified Setup Without Installing Java, Maven, or MongoDB Locally
 
 ## 📡 API Endpoints
 
@@ -197,7 +209,7 @@ Make sure you have installed:
 ### 2️⃣ Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/spokify-backend.git
+git clone https://github.com/abdelrahman8284-sudo/TransAura-API.git
 cd spokify-backend
 ```
 
@@ -300,6 +312,99 @@ http://localhost:4000
 - Frontend and Mobile applications connect to this backend through REST APIs.
 - AI processing services are integrated externally through frontend/mobile layers.
 ```
+### 🐳 Run with Docker
+
+Run the backend and MongoDB using Docker Compose without installing Java, Maven, or MongoDB directly on your machine.
+
+#### 1️⃣ Prerequisites
+Make sure you have installed:
+- **Docker Desktop**
+- **Git**
+
+> ℹ️ *Docker Desktop includes Docker Compose.*
+
+#### 2️⃣ Clone the Repository
+```bash
+git clone https://github.com/abdelrahman8284-sudo/TransAura-API.git
+cd spokify-backend
+```
+
+#### 3️⃣ Configure Environment Variables
+Create your local `.env` file from the provided example:
+
+**Windows (PowerShell):**
+```powershell
+Copy-Item .env.example .env
+```
+
+**Linux / macOS:**
+```bash
+cp .env.example .env
+```
+
+Open the `.env` file and provide the required values:
+```env
+PORT=4000
+MONGO_DB_URL=mongodb://mongodb:27017/Spokify
+MY_EMAIL_USER=your_email@gmail.com
+MY_EMAIL_PASS=your_gmail_app_password
+JWT_SECRET_KEY=your_jwt_secret
+```
+
+**Important:**
+- Replace the placeholder values with your own credentials.
+- Use a Gmail App Password for email functionality.
+- Keep your `.env` file private. Never commit it to GitHub.
+- The MongoDB URL uses `mongodb` as the hostname because it is the MongoDB service name in Docker Compose.
+
+#### 4️⃣ Build and Start the Application
+From the project root directory, run:
+```bash
+docker compose up --build
+```
+Docker Compose will build the backend image, create the application and MongoDB containers, and start the services.
+
+> ℹ️ *On the first run, Docker may need to download the required images and Maven dependencies.*
+
+#### 5️⃣ Access the Backend
+Once the application starts successfully, the backend will be available at:
+`http://localhost:4000`
+
+MongoDB runs in its own container, and its data is stored in a Docker volume named `mongo_data`.
+
+#### 6️⃣ View Application Logs
+To follow the logs of all services:
+```bash
+docker compose logs -f
+```
+
+To view only the backend logs:
+```bash
+docker compose logs -f app
+```
+
+#### 7️⃣ Stop the Application
+Press `Ctrl + C` in the terminal, then run:
+```bash
+docker compose down
+```
+This stops and removes the containers but preserves the MongoDB data in the `mongo_data` volume.
+
+To stop the containers and delete the stored MongoDB data as well, run:
+```bash
+docker compose down -v
+```
+> ⚠️ **Warning:** The `-v` option deletes the MongoDB volume and its stored data.
+
+---
+
+### 📝 Notes
+- Docker Desktop must be running before executing Docker commands.
+- The first build may take longer because Docker downloads images and dependencies.
+- You do not need to install Java, Maven, or MongoDB locally when using Docker.
+- The `.env` file is required for the application configuration.
+- Email password-reset functionality requires valid Gmail SMTP credentials.
+- MongoDB data persists across container restarts through the `mongo_data` volume.
 
 # 🗄 Database Schema
 

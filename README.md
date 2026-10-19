@@ -19,6 +19,7 @@ The platform allows users to:
 The backend architecture was redesigned and rebuilt using **Spring Boot** and **MongoDB**, replacing the original backend implementation with a more scalable and maintainable enterprise-level solution.
 
 The backend communicates with the frontend and AI processing services through RESTful APIs, handling:
+
 - User authentication & authorization
 - Audio file management
 - Transcription storage
@@ -35,14 +36,18 @@ The application follows a clean layered architecture:
 - Modular and maintainable backend structure
 
 This project was developed as a Graduation Project focused on:
+
 - Modern Backend Engineering
 - Audio Processing Systems
 - RESTful API Development
 - Full-Stack Application Architecture
 
+---
+
 ## 🛠 Tech Stack
 
 ### Backend
+
 - **Java 21**
 - **Spring Boot**
 - **Spring Security**
@@ -54,9 +59,11 @@ This project was developed as a Graduation Project focused on:
 - **Java Mail Sender**
 
 ### Database
+
 - **MongoDB**
 
-## 🐳 Containerization
+### Containerization
+
 - Docker
 - Docker Compose
 - Multi-stage Docker Build
@@ -64,21 +71,25 @@ This project was developed as a Graduation Project focused on:
 - Docker Volumes
 
 ### Frontend
+
 - **React**
 - **TypeScript**
 - **Tailwind CSS**
 - **Axios**
 
 ### Mobile Application
+
 - **Flutter**
 
 ### Audio & File Handling
+
 - **Multipart File Upload**
 - **Local Audio Storage**
 - **Audio Streaming**
 - **MediaRecorder API**
 
 ### Architecture & APIs
+
 - **RESTful APIs**
 - **Layered Architecture**
 - **DTO-Based Communication**
@@ -114,6 +125,8 @@ This project was developed as a Graduation Project focused on:
 - 💾 Persistent MongoDB Data Using Docker Volumes
 - ⚙️ Environment Variable Configuration
 - 🚀 Simplified Setup Without Installing Java, Maven, or MongoDB Locally
+
+---
 
 ## 📡 API Endpoints
 
@@ -167,6 +180,9 @@ Example Authorization Header:
 
 ```http
 Authorization: Bearer your_jwt_token
+```
+
+---
 
 ## 📸 Screenshots
 
@@ -192,8 +208,6 @@ The screenshots section may include:
 
 Follow the steps below to run the backend locally.
 
----
-
 ### 1️⃣ Prerequisites
 
 Make sure you have installed:
@@ -204,16 +218,12 @@ Make sure you have installed:
 - Git
 - IntelliJ IDEA / STS (recommended)
 
----
-
 ### 2️⃣ Clone the Repository
 
 ```bash
 git clone https://github.com/abdelrahman8284-sudo/TransAura-API.git
 cd spokify-backend
 ```
-
----
 
 ### 3️⃣ Environment Variables
 
@@ -227,8 +237,6 @@ JWT_SECRET_KEY=your_jwt_secret
 MY_EMAIL_USER=your_email@gmail.com
 MY_EMAIL_PASS=your_gmail_app_password
 ```
-
----
 
 ### 4️⃣ MongoDB Configuration
 
@@ -244,8 +252,6 @@ Database name:
 Spokify
 ```
 
----
-
 ### 5️⃣ Application Configuration
 
 Default backend port:
@@ -260,15 +266,11 @@ Multipart upload limit:
 100MB
 ```
 
----
-
 ### 6️⃣ Build the Project
 
 ```bash
 mvn clean install
 ```
-
----
 
 ### 7️⃣ Run the Application
 
@@ -290,8 +292,6 @@ Backend will start on:
 http://localhost:4000
 ```
 
----
-
 ### 8️⃣ Main Backend Features
 
 - JWT Authentication & Authorization
@@ -302,8 +302,6 @@ http://localhost:4000
 - AI-ready Backend APIs
 - RESTful API Architecture
 
----
-
 ### ✅ Notes
 
 - MongoDB must be running before starting the application.
@@ -312,37 +310,46 @@ http://localhost:4000
 - Frontend and Mobile applications connect to this backend through REST APIs.
 - AI processing services are integrated externally through frontend/mobile layers.
 
-### 🐳 Run with Docker
+---
+
+## 🐳 Run with Docker
 
 Run the backend and MongoDB using Docker Compose without installing Java, Maven, or MongoDB directly on your machine.
 
-#### 1️⃣ Prerequisites
+### 1️⃣ Prerequisites
+
 Make sure you have installed:
+
 - **Docker Desktop**
 - **Git**
 
 > ℹ️ *Docker Desktop includes Docker Compose.*
 
-#### 2️⃣ Clone the Repository
+### 2️⃣ Clone the Repository
+
 ```bash
 git clone https://github.com/abdelrahman8284-sudo/TransAura-API.git
 cd spokify-backend
 ```
 
-#### 3️⃣ Configure Environment Variables
+### 3️⃣ Configure Environment Variables
+
 Create your local `.env` file from the provided example:
 
 **Windows (PowerShell):**
+
 ```powershell
 Copy-Item .env.example .env
 ```
 
 **Linux / macOS:**
+
 ```bash
 cp .env.example .env
 ```
 
 Open the `.env` file and provide the required values:
+
 ```env
 PORT=4000
 MONGO_DB_URL=mongodb://mongodb:27017/Spokify
@@ -352,53 +359,66 @@ JWT_SECRET_KEY=your_jwt_secret
 ```
 
 **Important:**
+
 - Replace the placeholder values with your own credentials.
 - Use a Gmail App Password for email functionality.
 - Keep your `.env` file private. Never commit it to GitHub.
 - The MongoDB URL uses `mongodb` as the hostname because it is the MongoDB service name in Docker Compose.
 
-#### 4️⃣ Build and Start the Application
+### 4️⃣ Build and Start the Application
+
 From the project root directory, run:
+
 ```bash
 docker compose up --build
 ```
+
 Docker Compose will build the backend image, create the application and MongoDB containers, and start the services.
 
 > ℹ️ *On the first run, Docker may need to download the required images and Maven dependencies.*
 
-#### 5️⃣ Access the Backend
+### 5️⃣ Access the Backend
+
 Once the application starts successfully, the backend will be available at:
+
 `http://localhost:4000`
 
 MongoDB runs in its own container, and its data is stored in a Docker volume named `mongo_data`.
 
-#### 6️⃣ View Application Logs
+### 6️⃣ View Application Logs
+
 To follow the logs of all services:
+
 ```bash
 docker compose logs -f
 ```
 
 To view only the backend logs:
+
 ```bash
 docker compose logs -f app
 ```
 
-#### 7️⃣ Stop the Application
+### 7️⃣ Stop the Application
+
 Press `Ctrl + C` in the terminal, then run:
+
 ```bash
 docker compose down
 ```
+
 This stops and removes the containers but preserves the MongoDB data in the `mongo_data` volume.
 
 To stop the containers and delete the stored MongoDB data as well, run:
+
 ```bash
 docker compose down -v
 ```
+
 > ⚠️ **Warning:** The `-v` option deletes the MongoDB volume and its stored data.
 
----
-
 ### 📝 Notes
+
 - Docker Desktop must be running before executing Docker commands.
 - The first build may take longer because Docker downloads images and dependencies.
 - You do not need to install Java, Maven, or MongoDB locally when using Docker.
@@ -406,9 +426,11 @@ docker compose down -v
 - Email password-reset functionality requires valid Gmail SMTP credentials.
 - MongoDB data persists across container restarts through the `mongo_data` volume.
 
-# 🗄 Database Schema
+---
 
-## 📂 users Collection
+## 🗄 Database Schema
+
+### 📂 users Collection
 
 ```json
 {
@@ -424,7 +446,7 @@ docker compose down -v
 }
 ```
 
-### Fields
+#### Fields
 
 | Field | Type | Description |
 |------|------|------|
@@ -440,7 +462,7 @@ docker compose down -v
 
 ---
 
-## 📂 transcriptions Collection
+### 📂 transcriptions Collection
 
 ```json
 {
@@ -467,7 +489,7 @@ docker compose down -v
 }
 ```
 
-### Fields
+#### Fields
 
 | Field | Type | Description |
 |------|------|------|
@@ -483,11 +505,10 @@ docker compose down -v
 
 ---
 
-# 🗺 Database Relationships
+## 🗺 Database Relationships
 
 ### Relationship Overview
 
 - One User → Many Transcriptions
 - Each Transcription belongs to one User
 - Audio and Metadata are embedded documents inside Transcription
-
